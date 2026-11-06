@@ -8,6 +8,9 @@ const MAC_PATTERN = /^([0-9A-F]{2}:){5}[0-9A-F]{2}$/
 // Keep only digits and cut to the max length
 const onlyDigits = (value, max) => value.replace(/\D/g, '').slice(0, max)
 
+// The age must be filled in and below 18
+const isValidAge = (value) => value !== '' && Number(value) <= 17
+
 const inputClass =
   'mt-1 w-full min-h-11 rounded-md border border-slate-300 bg-slate-50 px-3 focus:border-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-700/30'
 
@@ -49,7 +52,7 @@ const POPUP_TEXT = {
 
 export default function NewChildForm() {
   const [name, setName] = useState('')
-  const [mobile, setMobile] = useState('')
+  const [age, setAge] = useState('')
   const [aadhaar, setAadhaar] = useState('')
   const [parentMobile, setParentMobile] = useState('')
   const [captured, setCaptured] = useState({ left: false, right: false })
@@ -62,6 +65,7 @@ export default function NewChildForm() {
 
   const { requests, addRequest, setStatus } = useConsents()
   const { user } = useAuth()
+
   // The consent request sent from this form (if any) and its live status
   const request = requests.find((r) => r.id === requestId)
   const consentStatus = request ? request.status : ''
@@ -111,7 +115,7 @@ export default function NewChildForm() {
   const handleClear = () => {
     resetConsent()
     setName('')
-    setMobile('')
+    setAge('')
     setAadhaar('')
     setParentMobile('')
     setCaptured({ left: false, right: false })
@@ -131,13 +135,18 @@ export default function NewChildForm() {
       setMessage({ type: 'error', text: 'Enter the child name first.' })
       return
     }
+    if (!isValidAge(age)) {
+      setMessage({ type: 'error', text: 'Enter the child age (0 to 17 years) to send consent.' })
+      return
+    }
     if (parentMobile.length !== 10) {
       setMessage({ type: 'error', text: 'Enter the parent mobile number (10 digits) to send consent.' })
       return
     }
     setMessage({ type: '', text: '' })
-        const id = addRequest({
+    const id = addRequest({
       child: name.trim(),
+      childAge: Number(age),
       parentMobile,
       operatorId: user.userId,
       operatorName: user.name,
@@ -153,8 +162,8 @@ export default function NewChildForm() {
       setMessage({ type: 'error', text: 'Enter the child name.' })
       return
     }
-    if (mobile.length !== 10) {
-      setMessage({ type: 'error', text: 'Child mobile number must be 10 digits.' })
+    if (!isValidAge(age)) {
+      setMessage({ type: 'error', text: 'Enter the child age (0 to 17 years).' })
       return
     }
     if (aadhaar.length !== 12) {
@@ -184,7 +193,7 @@ export default function NewChildForm() {
     // Placeholder: the backend does not exist yet
     setMessage({
       type: 'info',
-      text: 'Form is valid. Saving is not connected to the backend yet.',
+      text: 'All details are valid, but nothing is saved yet. Saving will work once the backend is connected.',
     })
   }
 
@@ -222,15 +231,18 @@ export default function NewChildForm() {
             />
           </div>
           <div>
-            <label htmlFor="mobile" className="block font-bold">
-              Child mobile no.
+            <label htmlFor="age" className="block font-bold">
+              Child age (years)
             </label>
             <input
-              id="mobile"
-              type="tel"
+              id="age"
+              type="text"
               inputMode="numeric"
-              value={mobile}
-              onChange={(e) => setMobile(onlyDigits(e.target.value, 10))}
+              value={age}
+              onChange={(e) => {
+                resetConsent()
+                setAge(onlyDigits(e.target.value, 2))
+              }}
               className={inputClass}
             />
           </div>

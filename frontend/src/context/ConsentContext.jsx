@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { PARENT_DATA } from '../data/sampleData.js'
 
 // Demo only: consent requests are shared between browser tabs through localStorage.
 // The backend will replace this later.
@@ -10,9 +9,10 @@ const ConsentContext = createContext(null)
 function loadRequests() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY)
-    return saved ? JSON.parse(saved) : PARENT_DATA.consents
+    // Real requests always have a parent mobile; this drops old made-up sample rows
+    return saved ? JSON.parse(saved).filter((r) => r.parentMobile) : []
   } catch {
-    return PARENT_DATA.consents
+    return []
   }
 }
 
@@ -39,11 +39,13 @@ export function ConsentProvider({ children }) {
     return () => window.removeEventListener('storage', onStorage)
   }, [])
 
-const addRequest = ({ child, parentMobile, operatorId, operatorName }) => {
+  // Operator sends a new consent request to a parent (identified by mobile number)
+  const addRequest = ({ child, childAge, parentMobile, operatorId, operatorName }) => {
     const id = 'R-' + Date.now().toString().slice(-6)
     const request = {
       id,
       child,
+      childAge,
       parentMobile,
       operatorId,
       requestedBy: operatorName,

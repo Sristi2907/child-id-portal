@@ -1,52 +1,11 @@
 import DataTable, { Badge } from './DataTable.jsx'
-import { PARENT_DATA } from '../data/sampleData.js'
 import { useConsents } from '../context/ConsentContext.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
+
 const statusCol = {
   key: 'status',
   label: 'Status',
   render: (row) => <Badge value={row.status} />,
-}
-
-const TABLES = {
-  childs: {
-    columns: [
-      { key: 'id', label: 'ID' },
-      { key: 'name', label: 'Child' },
-      { key: 'age', label: 'Age' },
-      { key: 'registeredOn', label: 'Registered on' },
-      statusCol,
-    ],
-    rows: PARENT_DATA.children,
-  },
-  location: {
-    columns: [
-      { key: 'child', label: 'Child' },
-      { key: 'place', label: 'Last seen at' },
-      { key: 'seenAt', label: 'When' },
-    ],
-    rows: PARENT_DATA.location,
-  },
-  cases: {
-    columns: [
-      { key: 'id', label: 'Case' },
-      { key: 'child', label: 'Child' },
-      { key: 'openedOn', label: 'Opened on' },
-      statusCol,
-    ],
-    rows: PARENT_DATA.cases,
-  },
-  jobs: {
-    columns: [
-      { key: 'id', label: 'Job' },
-      { key: 'child', label: 'Child' },
-      { key: 'type', label: 'Type' },
-      { key: 'startedOn', label: 'Started on' },
-      statusCol,
-      { key: 'result', label: 'Result' },
-    ],
-    rows: PARENT_DATA.jobs,
-  },
 }
 
 function ConsentsTable() {
@@ -99,10 +58,11 @@ function ConsentsTable() {
   )
 }
 
+// Pages whose columns are not decided yet stay empty
+const EMPTY_TEXT =
+  'Nothing here yet. The columns and data for this page will be added once they are decided.'
+
 export default function ParentSection({ section }) {
   if (section === 'consents') return <ConsentsTable />
-
-  const table = TABLES[section]
-  if (!table) return null
-  return <DataTable columns={table.columns} rows={table.rows} />
+  return <DataTable columns={[]} rows={[]} emptyText={EMPTY_TEXT} />
 }

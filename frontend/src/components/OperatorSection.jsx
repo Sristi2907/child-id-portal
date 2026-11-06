@@ -7,7 +7,7 @@ const maskMobile = (mobile) => '******' + mobile.slice(-4)
 
 const columns = [
   { key: 'id', label: 'Request' },
-  { key: 'child', label: 'Child' },
+  { key: 'childAge', label: 'Child age', render: (row) => row.childAge ?? '-' },
   {
     key: 'parentMobile',
     label: 'Parent mobile',

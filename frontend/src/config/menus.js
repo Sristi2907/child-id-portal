@@ -33,7 +33,7 @@ export const MENUS = {
       items: [
         { key: 'profile', label: 'Profile' },
         { key: 'health', label: 'System health' },
-        { key: 'regchild', label: 'Reg. child' },
+        { key: 'regchild', label: 'Registered child' },
         { key: 'newchild', label: 'New child' },
       ],
     },
