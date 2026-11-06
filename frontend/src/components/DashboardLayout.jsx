@@ -1,8 +1,11 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { MENUS, ROLE_LABELS } from '../config/menus.js'
+import { useAuth } from '../context/AuthContext.jsx'
 
 export default function DashboardLayout({ role, section, children }) {
   const groups = MENUS[role]
+  const navigate = useNavigate()
+  const { logout } = useAuth()
 
   const baseNav =
     'flex min-h-11 items-center whitespace-nowrap rounded-md px-3 text-left hover:bg-slate-100'
@@ -49,12 +52,15 @@ export default function DashboardLayout({ role, section, children }) {
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="font-bold">{ROLE_LABELS[role]} dashboard</p>
           <div className="flex gap-2">
-            <Link
-              to="/"
-              className="flex min-h-11 items-center rounded-md bg-red-100 px-4 font-bold text-red-900 hover:bg-red-200"
+            <button
+              onClick={() => {
+                logout()
+                navigate('/')
+              }}
+              className="min-h-11 rounded-md bg-red-100 px-4 font-bold text-red-900 hover:bg-red-200"
             >
               Logout
-            </Link>
+            </button>
             <button
               onClick={() => window.location.reload()}
               className="min-h-11 rounded-md border border-slate-300 bg-white px-4 hover:border-teal-700"

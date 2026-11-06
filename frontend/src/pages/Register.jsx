@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext.jsx'
+
 
 const ROLES = [
   { value: 'admin', label: 'Admin' },
@@ -8,6 +10,8 @@ const ROLES = [
 ]
 
 export default function Register() {
+  const navigate = useNavigate()
+  const { register } = useAuth()
   const [name, setName] = useState('')
   const [mobile, setMobile] = useState('')
   const [userId, setUserId] = useState('')
@@ -68,11 +72,13 @@ export default function Register() {
       return
     }
 
-    // Placeholder: the backend does not exist yet
-    setMessage({
-      type: 'info',
-      text: 'Form is valid. Registration is not connected to the backend yet.',
-    })
+        // Demo only: the Aadhaar number and fingerprint are checked but never saved
+    const result = register({ name, mobile, userId, role })
+    if (!result.ok) {
+      setMessage({ type: 'error', text: result.error })
+      return
+    }
+    navigate('/login')
   }
 
   const inputClass =

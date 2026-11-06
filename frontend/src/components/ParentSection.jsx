@@ -1,7 +1,7 @@
-import { useState } from 'react'
 import DataTable, { Badge } from './DataTable.jsx'
 import { PARENT_DATA } from '../data/sampleData.js'
-
+import { useConsents } from '../context/ConsentContext.jsx'
+import { useAuth } from '../context/AuthContext.jsx'
 const statusCol = {
   key: 'status',
   label: 'Status',
@@ -50,11 +50,12 @@ const TABLES = {
 }
 
 function ConsentsTable() {
-  const [rows, setRows] = useState(PARENT_DATA.consents)
+  // Requests come from the shared store, so new operator requests show up here
+  const { requests, setStatus } = useConsents()
+  const { user } = useAuth()
 
-  const decide = (id, status) => {
-    setRows((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)))
-  }
+  // Show only requests sent to this parent's registered mobile number
+  const myRequests = requests.filter((r) => r.parentMobile === user.mobile)
 
   const columns = [
     { key: 'id', label: 'Request' },
@@ -70,14 +71,14 @@ function ConsentsTable() {
           <div className="flex gap-2">
             <button
               type="button"
-              onClick={() => decide(row.id, 'Approved')}
+              onClick={() => setStatus(row.id, 'Approved')}
               className="min-h-11 rounded-md bg-green-100 px-4 font-bold text-green-900 hover:bg-green-200"
             >
               Approve
             </button>
             <button
               type="button"
-              onClick={() => decide(row.id, 'Rejected')}
+              onClick={() => setStatus(row.id, 'Rejected')}
               className="min-h-11 rounded-md bg-red-100 px-4 font-bold text-red-900 hover:bg-red-200"
             >
               Reject
@@ -89,7 +90,13 @@ function ConsentsTable() {
     },
   ]
 
-  return <DataTable columns={columns} rows={rows} />
+  return (
+    <DataTable
+      columns={columns}
+      rows={myRequests}
+      emptyText="No consent requests for you yet."
+    />
+  )
 }
 
 export default function ParentSection({ section }) {

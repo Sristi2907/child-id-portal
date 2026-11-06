@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-
+import { useAuth } from '../context/AuthContext.jsx'
 const ROLES = [
   { value: 'admin', label: 'Admin' },
   { value: 'operator', label: 'Operator' },
@@ -9,6 +9,7 @@ const ROLES = [
 
 export default function Login() {
   const navigate = useNavigate()  
+  const { login } = useAuth()
   const [userId, setUserId] = useState('')
   const [role, setRole] = useState('')
   const [bioCaptured, setBioCaptured] = useState(false)
@@ -45,8 +46,12 @@ export default function Login() {
     }
 
     
-    // Temporary: no real login yet, go straight to the dashboard of the chosen role
-     navigate(`/dashboard/${role}`)
+    const result = login({ userId, role })
+    if (!result.ok) {
+      setMessage({ type: 'error', text: result.error })
+      return
+    }
+    navigate(`/dashboard/${role}`)
   }
 
   const inputClass =
