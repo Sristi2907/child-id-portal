@@ -41,7 +41,7 @@ export default function Login() {
       return
     }
     if (!bioCaptured) {
-      setMessage({ type: 'error', text: 'Capture your fingerprint first.' })
+      setMessage({ type: 'error', text: 'Enter your biometric data first.' })
       return
     }
 
@@ -125,7 +125,7 @@ export default function Login() {
               disabled={scanning}
               className="min-h-11 rounded-md border border-slate-300 px-4 hover:border-teal-700 disabled:opacity-60"
             >
-              {scanning ? 'Scanning...' : bioCaptured ? 'Re-take' : 'Capture fingerprint'}
+              {scanning ? 'Scanning...' : bioCaptured ? 'Re-take' : 'Biometric'}
             </button>
             <span
               className={
@@ -135,7 +135,7 @@ export default function Login() {
                   : 'border-slate-300 bg-slate-50 text-slate-600')
               }
             >
-              {bioCaptured ? 'Captured' : 'Not captured'}
+              {bioCaptured ? 'Entered' : 'Not Entered'}
             </span>
           </div>
 
